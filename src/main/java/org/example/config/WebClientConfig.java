@@ -16,7 +16,7 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient webClient(@Value("${base_post_url}") String baseUrl, WebClient.Builder webClientBuilder){
+    public WebClient webClient(@Value("${base_post_url}") String baseUrl, WebClient.Builder webClientBuilder) {
         return webClientBuilder.baseUrl(baseUrl)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();

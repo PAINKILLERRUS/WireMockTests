@@ -4,11 +4,9 @@ import org.example.model.Comment;
 import org.example.model.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -41,9 +39,9 @@ public class PostController {
     }
 
     @GetMapping(value = {"/{id}/comments"}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Comment> getComments(@PathVariable("id") int id){
+    public List<Comment> getComments(@PathVariable("id") int id) {
         return webClient.get()
-                .uri(x->x
+                .uri(x -> x
                         .path("/posts/{id}/comments")
                         .build(id))
                 .retrieve()
@@ -51,4 +49,35 @@ public class PostController {
                 .collectList()
                 .block();
     }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<Post> createPost(@RequestBody Post post) {
+        return webClient.post()
+                .uri("/posts")
+                .bodyValue(post)
+                .retrieve()
+                .bodyToMono(Post.class);
+    }
+
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, value = {"/{id}"})
+    public Mono<Post> createPost(@RequestBody Post post, @PathVariable("id") int id) {
+        return webClient.put()
+                .uri(x -> x
+                        .path("/posts/{id}")
+                        .build(id))
+                .bodyValue(post)
+                .retrieve()
+                .bodyToMono(Post.class);
+    }
+
+    @DeleteMapping(produces = MediaType.TEXT_PLAIN_VALUE, value = {"/{id}"})
+    public Mono<String> deletePost(@PathVariable("id") int id) {
+        return webClient.delete()
+                .uri(x -> x
+                        .path("/posts/{id}")
+                        .build(id))
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
 }

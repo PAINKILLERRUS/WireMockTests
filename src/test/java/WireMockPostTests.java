@@ -49,7 +49,7 @@ public class WireMockPostTests {
         List<Post> posts = generatingPostsAccordingToASpecifiedNumber(0);
         String jsonPosts = mapper.writeValueAsString(posts.get(0));
 
-        Utilities.getStubMapping(HttpMethod.GET, "/posts/1", jsonPosts, wireMockExtension);
+        Utilities.getStubMapping(HttpMethod.GET, "/posts/1", jsonPosts, null, wireMockExtension);
 
         webTestClient.get().uri("api/posts/1")
                 .exchange()
@@ -68,7 +68,7 @@ public class WireMockPostTests {
         List<Post> posts = generatingPostsAccordingToASpecifiedNumber(99);
         String jsonPosts = mapper.writeValueAsString(posts);
 
-        Utilities.getStubMapping(HttpMethod.GET, "/posts", jsonPosts, wireMockExtension);
+        Utilities.getStubMapping(HttpMethod.GET, "/posts", jsonPosts, null, wireMockExtension);
 
         webTestClient.get().uri("api/posts")
                 .exchange()
@@ -88,7 +88,7 @@ public class WireMockPostTests {
         List<Comment> comments = generatingCommentsAccordingASpecifiedNumber(4);
         String jsonComments = mapper.writeValueAsString(comments);
 
-        Utilities.getStubMapping(HttpMethod.GET, "/posts/1/comments", jsonComments, wireMockExtension);
+        Utilities.getStubMapping(HttpMethod.GET, "/posts/1/comments", jsonComments, null, wireMockExtension);
 
         webTestClient.get().uri("api/posts/1/comments")
                 .exchange()
@@ -101,4 +101,35 @@ public class WireMockPostTests {
                 });
     }
 
+    @Test
+    @SneakyThrows
+    @DisplayName("Отправка сгенерированного мок-поста методом POST")
+    public void sendingTheGeneratedMokPostUsingTheMethodPostTest() {
+        List<Post> posts = generatingPostsAccordingToASpecifiedNumber(0);
+        Post postToSend = posts.get(0);
+
+        Utilities.executeRequest(HttpMethod.POST, "/posts", postToSend, wireMockExtension, webTestClient);
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("Отправка сгенерированного мок-поста методом PUT")
+    public void sendingTheGeneratedMokPostUsingTheMethodPutTest() {
+        List<Post> posts = generatingPostsAccordingToASpecifiedNumber(0);
+        Post postToSend = posts.get(0);
+
+        Utilities.executeRequest(HttpMethod.PUT, "/posts/1", postToSend, wireMockExtension, webTestClient);
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("Мок тест на удаление поста")
+    public void deletingPostMockTest() {
+        Utilities.getStubMapping(HttpMethod.DELETE, "/posts/1", "Deleted post 1", null, wireMockExtension);
+
+        webTestClient.delete().uri("api/posts/1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class);
+    }
 }

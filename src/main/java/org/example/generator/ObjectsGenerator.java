@@ -30,7 +30,7 @@ public class ObjectsGenerator {
         return postList;
     }
 
-    public static List<Comment> generatingCommentsAccordingASpecifiedNumber(int count){
+    public static List<Comment> generatingCommentsAccordingASpecifiedNumber(int count) {
 
         List<Comment> commentList = new ArrayList<>();
         Random random = new Random();
